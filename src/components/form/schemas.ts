@@ -9,11 +9,18 @@ export const registrationSchema = z.object({
         .email({ message: 'Email không hợp lệ' }),
     role: z
         .enum(['admin', 'user', 'editor']),
-    password: z.string()
+    password: z
+        .string()
         .min(8, 'Phải có ít nhất 8 ký tự')
         .regex(/[A-Z]/, { message: 'Phải có ít nhất 1 ký tự viết hoa' })
-        .regex(/[A-Z]/, { message: 'Phải có ít nhất 1 ký tự viết hoa' })
+        .regex(/[A-Z]/, { message: 'Phải có ít nhất 1 ký tự viết hoa' }),
+    confirmPassword: z
+        .string()
 })
+    .refine((data) => data.password === data.confirmPassword, {
+        message: "Mật khẩu xác nhận không khớp",
+        path: ["confirmPassword"], // Lỗi sẽ được gán cho trường confirmPassword
+    })
 
 // Nếu bạn sửa schema, Type này tự động cập nhật. Không cần sửa 2 nơi.
 export type RegistrationFormValues = z.infer<typeof registrationSchema>
